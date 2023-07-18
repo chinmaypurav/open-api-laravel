@@ -1,0 +1,23 @@
+{
+    "name": "chinmay/open-api-laravel",
+    "description": "Laravel Open API Schema Generator",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Chinmay\\OpenApiLaravel\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chinmay Purav",
+            "email": "chinpurav@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^9.0|^10.0",
+        "illuminate/routing": "^9.0|^10.0"
+    }
+}
