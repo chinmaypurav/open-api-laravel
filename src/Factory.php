@@ -5,11 +5,14 @@ namespace Chinmay\OpenApiLaravel;
 use Chinmay\OpenApi\Info;
 use Chinmay\OpenApi\OpenApi;
 use Chinmay\OpenApi\Operation;
+use Chinmay\OpenApi\Parameter;
 use Chinmay\OpenApi\PathItem;
 use Chinmay\OpenApi\Paths;
+use Chinmay\OpenApi\Response;
+use Chinmay\OpenApi\Responses;
+use Chinmay\OpenApi\Schema;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -44,17 +47,29 @@ class Factory
         $allRoutes->filter(
             fn(Route $route) => in_array('api', $route->action['middleware'])
         )->groupBy(
-            fn(Route $route, int $key) => Arr::get($route->action, 'tag', '')
+            fn(Route $route, int $key) => $route->uri
         )->mapWithKeys(
-            fn(Collection $routes, string $group) => $routes->map(
-                fn(Route $route) => $this->makePathItem($route)
-            )
+            fn(Collection $routes, string $uri) => $this->makePathItem($uri, $routes)
         );
+
 
         return $this->paths;
     }
 
-    protected function makePathItem(Route $route) :Route
+    protected function makePathItem(string $uri, Collection $routes) :Collection
+    {
+        $pathItem = new PathItem();
+
+        $routes->map(
+            fn(Route $route) => $this->makeOperation($pathItem, $route)
+        );
+
+        $this->paths->put('/'.$uri, $pathItem);
+
+        return $routes;
+    }
+
+    protected function makeOperation(PathItem $pathItem, Route $route): void
     {
         $operation = new Operation();
 
@@ -62,15 +77,38 @@ class Factory
             $operation->setTags([$tag]);
         }
 
-        $pathItem = new PathItem();
-        $pathItem->setOperation($this->resolveMethod($route->methods), $operation);
-        $this->paths->put('/'.$route->uri, $pathItem);
+        if (Str::contains($route->uri, ['{', '}'])){
+            $this->makeParameter($route, $operation);
+        }
 
-        return $route;
+        $pathItem->setOperation($this->resolveMethod($route->methods), $operation);
     }
 
     protected function resolveMethod(array $methods): string
     {
         return Str::lower($methods[0]);
+    }
+
+    protected function makeParameter(Route $route, Operation $operation): void
+    {
+        $parameters = Str::matchAll('/{([^}]*)}/', $route->uri);
+
+        $array = [];
+        foreach ($parameters as $parameter){
+            $p = new Parameter($parameter, 'path');
+            $schema = new Schema('string');
+            $p->setSchema($schema);
+
+            $responses = new Responses();
+
+            $response = new Response('Default Response');
+
+            $responses->putDefault($response);
+
+            $array[] = $p;
+            $operation->setResponses($responses);
+        }
+
+        $operation->setParameters($array);
     }
 }
