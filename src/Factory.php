@@ -81,6 +81,13 @@ class Factory
             $this->makeParameter($route, $operation);
         }
 
+        $responses = new Responses();
+
+        $response = new Response('Default Response');
+        $responses->putDefault($response);
+
+        $operation->setResponses($responses);
+
         $pathItem->setOperation($this->resolveMethod($route->methods), $operation);
     }
 
@@ -99,14 +106,7 @@ class Factory
             $schema = new Schema('string');
             $parameter->setSchema($schema);
 
-            $responses = new Responses();
-
-            $response = new Response('Default Response');
-
-            $responses->putDefault($response);
-
             $parameters[] = $parameter;
-            $operation->setResponses($responses);
         }
 
         $operation->setParameters($parameters);
