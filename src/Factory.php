@@ -91,13 +91,13 @@ class Factory
 
     protected function makeParameter(Route $route, Operation $operation): void
     {
-        $parameters = Str::matchAll('/{([^}]*)}/', $route->uri);
+        $matches = Str::matchAll('/{([^}]*)}/', $route->uri);
 
-        $array = [];
-        foreach ($parameters as $parameter){
-            $p = new Parameter($parameter, 'path');
+        $parameters = [];
+        foreach ($matches as $match){
+            $parameter = new Parameter($match, 'path');
             $schema = new Schema('string');
-            $p->setSchema($schema);
+            $parameter->setSchema($schema);
 
             $responses = new Responses();
 
@@ -105,10 +105,10 @@ class Factory
 
             $responses->putDefault($response);
 
-            $array[] = $p;
+            $parameters[] = $parameter;
             $operation->setResponses($responses);
         }
 
-        $operation->setParameters($array);
+        $operation->setParameters($parameters);
     }
 }
