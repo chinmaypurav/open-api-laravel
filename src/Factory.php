@@ -88,6 +88,12 @@ class Factory
 
         $operation->setResponses($responses);
 
+        $ruleResolver = new RuleResolver();
+
+        if ($requestBody = $ruleResolver->resolve($route->action['uses'])){
+            $operation->setRequestBody($requestBody);
+        }
+
         $pathItem->setOperation($this->resolveMethod($route->methods), $operation);
     }
 
