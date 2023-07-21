@@ -14,6 +14,7 @@ use Chinmay\OpenApi\Schema;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
@@ -88,7 +89,7 @@ class Factory
 
         $operation->setResponses($responses);
 
-        $ruleResolver = new RuleResolver();
+        $ruleResolver = App::make(RuleResolver::class);
 
         if ($requestBody = $ruleResolver->resolve($route->action['uses'])){
             $operation->setRequestBody($requestBody);
