@@ -15,9 +15,9 @@ class RuleResolver
 {
     public function resolve(Closure|string $uses)
     {
-//        if ($uses instanceof Closure){
-//            return $this->resolveClosure($uses);
-//        }
+        if ($uses instanceof Closure){
+            return $this->resolveClosure($uses);
+        }
 
         return $this->resolveController($uses);
     }
@@ -60,13 +60,27 @@ class RuleResolver
 
         $properties = Collection::make();
 
-        foreach ($rules as $attribute => $rule){
-            foreach ($rule as $r){
-                if ($r === 'required'){
-                    $schema->putRequired($attribute);
-                }
+        foreach ($rules as $attribute => $ruleSet){
+            $property = [];
+            if (in_array('required', $ruleSet)){
+                $schema->putRequired($attribute);
             }
-            $properties->put($attribute, ['type' => 'string']);
+            if (in_array('string', $ruleSet)){
+                $property['type'] = 'string';
+            }
+            if (in_array('password', $ruleSet)){
+                $property['type'] = 'string';
+                $property['format'] = 'password';
+            }
+            if (in_array('numeric', $ruleSet)){
+                $property['type'] = 'number';
+                $property['format'] = 'float';
+            }
+            if (in_array('integer', $ruleSet)){
+                $property['type'] = 'integer';
+                $property['format'] = 'int64';
+            }
+            $properties->put($attribute, $property);
 
         }
 
