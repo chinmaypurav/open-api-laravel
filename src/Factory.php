@@ -22,16 +22,20 @@ class Factory
 {
     public function __construct(protected Router $router, protected OpenApi $openApi, protected Paths $paths)
     {
-
     }
 
-    public function make():OpenApi
+    public function make(): self
     {
         $this->openApi
             ->setInfo($this->makeInfo())
             ->setPaths($this->makePaths());
 
-        return $this->openApi;
+        return $this;
+    }
+
+    public function toJson(): bool|string
+    {
+        return $this->openApi->toJson(JSON_PRETTY_PRINT);
     }
 
     protected function makeInfo():Info
@@ -57,7 +61,7 @@ class Factory
         return $this->paths;
     }
 
-    protected function makePathItem(string $uri, Collection $routes) :Collection
+    protected function makePathItem(string $uri, Collection $routes): Collection
     {
         $pathItem = new PathItem();
 
