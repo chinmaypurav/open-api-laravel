@@ -2,6 +2,7 @@
 
 namespace Chinmay\OpenApiLaravel;
 
+use Chinmay\OpenApiLaravel\Console\Commands\OpenAPISpecificationCommand;
 use Illuminate\Support\ServiceProvider;
 
 class OpenApiLaravelServiceProvider extends ServiceProvider
@@ -16,13 +17,12 @@ class OpenApiLaravelServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
-        //
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+               OpenAPISpecificationCommand::class
+            ]);
+        }
     }
 }
