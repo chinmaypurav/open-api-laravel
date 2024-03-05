@@ -33,9 +33,9 @@ class Factory
         return $this;
     }
 
-    public function toJson(): bool|string
+    public function toJson($options = 0): bool|string
     {
-        return $this->openApi->toJson(JSON_PRETTY_PRINT);
+        return $this->openApi->toJson($options);
     }
 
     protected function makeInfo():Info
