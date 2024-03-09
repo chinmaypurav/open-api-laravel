@@ -13,7 +13,10 @@ use ReflectionException;
 
 class RuleResolver
 {
-    public function resolve(Closure|string $uses)
+    /**
+     * @throws ReflectionException
+     */
+    public function resolve(Closure|string $uses): ?RequestBody
     {
         if ($uses instanceof Closure){
             return $this->resolveClosure($uses);
@@ -38,13 +41,14 @@ class RuleResolver
         $class = new \ReflectionClass($controller);
         $method = $class->getMethod($method);
 
-        $parameters =Collection::make($method->getParameters());
+        $parameters = Collection::make($method->getParameters());
 
         $requestClass = $parameters->where(
             fn (\ReflectionParameter $parameter) => is_subclass_of($parameter->getType()->getName(), FormRequest::class)
         )->first();
 
         if (!$requestClass){
+            // TODO
             return;
         }
 
