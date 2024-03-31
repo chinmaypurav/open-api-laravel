@@ -15,5 +15,7 @@ return [
             'paths' => []
         ],
     ],
-    'default_property_type' => 'string',
+    'defaults' => [
+        'property_type' => 'string',
+    ],
 ];
