@@ -51,7 +51,7 @@ class Factory
         $allRoutes = Collection::make($this->router->getRoutes());
 
         $allRoutes->filter(
-            fn (Route $route) => in_array('api', $route->action['middleware'])
+            fn (Route $route) => $this->filterPaths($route)
         )->groupBy(
             fn (Route $route, int $key) => $route->uri
         )->mapWithKeys(
@@ -60,6 +60,31 @@ class Factory
 
 
         return $this->paths;
+    }
+
+    protected function filterPaths(Route $route): bool
+    {
+        if ($excludedMiddlewares = config('openapi.routes.exclude.middlewares')) {
+
+            return ! Str::startsWith($route->uri, $excludedMiddlewares);
+        }
+
+        if ($excludedPaths = config('openapi.routes.exclude.paths')) {
+
+            return ! Str::startsWith($route->uri, $excludedPaths);
+        }
+
+        if ($includedMiddlewares = config('openapi.routes.include.middlewares')) {
+
+            return (bool) array_intersect($route->action['middleware'], $includedMiddlewares);
+        }
+
+        if ($includedPaths = config('openapi.routes.include.paths')) {
+
+            return ! array_intersect($route->action['middleware'], $includedPaths);
+        }
+
+        return true;
     }
 
     protected function makePathItem(string $uri, Collection $routes): Collection
