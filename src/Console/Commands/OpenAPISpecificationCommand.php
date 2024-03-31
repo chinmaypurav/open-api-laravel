@@ -11,7 +11,7 @@ class OpenAPISpecificationCommand extends Command
 {
     protected $signature = 'openapi:generate';
 
-    protected $description = 'Generated Open API Specification';
+    protected $description = 'Generate Open API Specification schema';
 
     public function handle(Factory $factory): void
     {
