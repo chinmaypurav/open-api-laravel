@@ -12,6 +12,16 @@ To install this package locally, run the following command
 composer require chinmay/open-api-laravel --dev
 ```
 
+### Configuration
+
+The routes to be included/excluded, schema path, etc. are configured via [openapi.php](config/openapi.php) config file.
+
+To publish the file run the following command.
+
+```bash
+php artisan vendor:publish --tag=openapi
+```
+
 ### Generate Schema
 
 To generate schema run the following command

@@ -25,6 +25,6 @@ class OpenApiLaravelServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../config/openapi.php' => config_path('openapi.php'),
-        ]);
+        ], 'openapi');
     }
 }
