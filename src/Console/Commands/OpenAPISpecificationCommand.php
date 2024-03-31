@@ -12,9 +12,9 @@ class OpenAPISpecificationCommand extends Command
 
     protected $description = 'Generated Open API Specification';
 
-    public function handle(Factory $factory):void
+    public function handle(Factory $factory): void
     {
-        $json = $factory->make()->toJson(JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+        $json = $factory->make()->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
         File::put(storage_path('open-api.json'), $json);
     }
