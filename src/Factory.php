@@ -103,6 +103,7 @@ class Factory
 
         if ($requestBody = $method->requestClass) {
             $operation->setRequestBody($ruleResolver->resolveBody($requestBody));
+            $operation->setDescription($method->docComment);
         }
 
         $pathItem->setOperation($this->resolveMethod($route->methods), $operation);

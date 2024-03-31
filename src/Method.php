@@ -11,6 +11,7 @@ use ReflectionException;
 class Method
 {
     public ?\ReflectionParameter $requestClass = null;
+    public string $docComment = '';
 
     /**
      * @throws ReflectionException
@@ -40,6 +41,8 @@ class Method
         $this->requestClass = $parameters->firstwhere(
             fn (\ReflectionParameter $parameter) => is_subclass_of($parameter->getType()->getName(), FormRequest::class)
         );
+
+        $this->resolveDocComment($closureReflection->getDocComment());
     }
 
     /**
@@ -58,5 +61,23 @@ class Method
         $this->requestClass = $parameters->firstwhere(
             fn (\ReflectionParameter $parameter) => is_subclass_of($parameter->getType()->getName(), FormRequest::class)
         );
+
+
+        $this->resolveDocComment($method->getDocComment());
+    }
+
+    protected function resolveDocComment(string|false $docComment): void
+    {
+        if (!$docComment) {
+            return;
+        }
+
+        $this->docComment = Str::of($docComment)
+            ->substr(4)
+            ->beforeLast("\n")
+            ->explode("\n")
+            ->filter(fn (string $line) => ! Str::contains($line, ['@']))
+            ->map(fn (string $line) => Str::of($line)->after('*')->trim()->toString())
+            ->implode(fn (string $value) => $value, ' ');
     }
 }
