@@ -3,6 +3,7 @@
 namespace Chinmay\OpenApiLaravel;
 
 use Chinmay\OpenApi\Info;
+use Chinmay\OpenApi\License;
 use Chinmay\OpenApi\OpenApi;
 use Chinmay\OpenApi\Operation;
 use Chinmay\OpenApi\Parameter;
@@ -16,6 +17,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use ReflectionException;
 
@@ -43,8 +45,27 @@ class Factory
     {
         $appName = Config::get('app.name', '');
         $version = '1.0.0';
-        return new Info($appName, $version);
+
+        $info = new Info($appName, $version);
+
+        $this->makeLicence($info);
+
+        return $info;
     }
+
+    protected function makeLicence(Info $info): void
+    {
+        if (! $licence = File::get(__DIR__.'/../LICENSE')) {
+            return;
+        }
+
+        $licence = Str::before($licence, "\n");
+
+        $licence = new License($licence);
+
+        $info->setLicense($licence);
+    }
+
 
     public function makePaths(): Paths
     {
