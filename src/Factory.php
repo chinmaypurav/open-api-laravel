@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use ReflectionException;
 
 class Factory
 {
@@ -38,7 +39,7 @@ class Factory
         return $this->openApi->toJson($options);
     }
 
-    protected function makeInfo():Info
+    protected function makeInfo(): Info
     {
         $appName = Config::get('app.name', '');
         $version = '1.0.0';
@@ -50,11 +51,11 @@ class Factory
         $allRoutes = Collection::make($this->router->getRoutes());
 
         $allRoutes->filter(
-            fn(Route $route) => in_array('api', $route->action['middleware'])
+            fn (Route $route) => in_array('api', $route->action['middleware'])
         )->groupBy(
-            fn(Route $route, int $key) => $route->uri
+            fn (Route $route, int $key) => $route->uri
         )->mapWithKeys(
-            fn(Collection $routes, string $uri) => $this->makePathItem($uri, $routes)
+            fn (Collection $routes, string $uri) => $this->makePathItem($uri, $routes)
         );
 
 
@@ -66,7 +67,7 @@ class Factory
         $pathItem = new PathItem();
 
         $routes->map(
-            fn(Route $route) => $this->makeOperation($pathItem, $route)
+            fn (Route $route) => $this->makeOperation($pathItem, $route)
         );
 
         $this->paths->put('/'.$uri, $pathItem);
@@ -74,15 +75,18 @@ class Factory
         return $routes;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function makeOperation(PathItem $pathItem, Route $route): void
     {
         $operation = new Operation();
 
-        if ($tag = $route->action['tag'] ?? ''){
+        if ($tag = $route->action['tag'] ?? '') {
             $operation->setTags([$tag]);
         }
 
-        if (Str::contains($route->uri, ['{', '}'])){
+        if (Str::contains($route->uri, ['{', '}'])) {
             $this->makeParameter($route, $operation);
         }
 
@@ -93,10 +97,12 @@ class Factory
 
         $operation->setResponses($responses);
 
+        $method = App::make(Method::class)->resolve($route->action['uses']);
+
         $ruleResolver = App::make(RuleResolver::class);
 
-        if ($requestBody = $ruleResolver->resolve($route->action['uses'])){
-            $operation->setRequestBody($requestBody);
+        if ($requestBody = $method->requestClass) {
+            $operation->setRequestBody($ruleResolver->resolveBody($requestBody));
         }
 
         $pathItem->setOperation($this->resolveMethod($route->methods), $operation);
@@ -112,7 +118,7 @@ class Factory
         $matches = Str::matchAll('/{([^}]*)}/', $route->uri);
 
         $parameters = [];
-        foreach ($matches as $match){
+        foreach ($matches as $match) {
             $parameter = new Parameter($match, 'path');
             $schema = new Schema('string');
             $parameter->setSchema($schema);
