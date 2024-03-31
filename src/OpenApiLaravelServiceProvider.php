@@ -7,14 +7,12 @@ use Illuminate\Support\ServiceProvider;
 
 class OpenApiLaravelServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
-        //
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/openapi.php',
+            'openapi'
+        );
     }
 
     public function boot(): void
@@ -24,5 +22,9 @@ class OpenApiLaravelServiceProvider extends ServiceProvider
                OpenAPISpecificationCommand::class
             ]);
         }
+
+        $this->publishes([
+            __DIR__.'/../config/openapi.php' => config_path('openapi.php'),
+        ]);
     }
 }

@@ -5,6 +5,7 @@ namespace Chinmay\OpenApiLaravel\Console\Commands;
 use Chinmay\OpenApiLaravel\Factory;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
 class OpenAPISpecificationCommand extends Command
@@ -17,8 +18,11 @@ class OpenAPISpecificationCommand extends Command
     {
         $json = $factory->make()->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-        (new Filesystem())->ensureDirectoryExists(storage_path('openapi'));
+        $path = Config::get('openapi.schema.path');
+        $filename = Config::get('openapi.schema.filename');
 
-        File::put(storage_path('openapi/schema.json'), $json);
+        (new Filesystem())->ensureDirectoryExists($path);
+
+        File::put("{$path}/{$filename}", $json);
     }
 }
