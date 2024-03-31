@@ -86,8 +86,7 @@ class Factory
     protected function filterPaths(Route $route): bool
     {
         if ($excludedMiddlewares = config('openapi.routes.exclude.middlewares')) {
-
-            return ! Str::startsWith($route->uri, $excludedMiddlewares);
+            return ! array_intersect($route->action['middleware'], $excludedMiddlewares);
         }
 
         if ($excludedPaths = config('openapi.routes.exclude.paths')) {
@@ -101,8 +100,7 @@ class Factory
         }
 
         if ($includedPaths = config('openapi.routes.include.paths')) {
-
-            return ! array_intersect($route->action['middleware'], $includedPaths);
+            return ! Str::startsWith($route->uri, $includedPaths);
         }
 
         return true;
