@@ -30,6 +30,9 @@ class RuleResolver
             if (in_array('required', $ruleSet)) {
                 $schema->putRequired($attribute);
             }
+
+            $property['type'] = config('openapi.default_property_type', 'string');
+
             if (in_array('string', $ruleSet)) {
                 $property['type'] = 'string';
             }
