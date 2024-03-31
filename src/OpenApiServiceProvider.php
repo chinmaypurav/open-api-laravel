@@ -5,7 +5,7 @@ namespace Chinmay\OpenApiLaravel;
 use Chinmay\OpenApiLaravel\Console\Commands\OpenAPISpecificationCommand;
 use Illuminate\Support\ServiceProvider;
 
-class OpenApiLaravelServiceProvider extends ServiceProvider
+class OpenApiServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
