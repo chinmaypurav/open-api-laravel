@@ -20,5 +20,8 @@
         "illuminate/support": "^9.0|^10.0|^11.0",
         "illuminate/routing": "^9.0|^10.0|^11.0",
         "chinmay/open-api": "dev-main"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "dev-master"
     }
 }
