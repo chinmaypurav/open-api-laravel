@@ -25,9 +25,25 @@ class RuleResolver
         return $this->resolveController($uses);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function resolveClosure(Closure $closure)
     {
+        $closureReflection = new \ReflectionFunction($closure);
 
+        $parameters = Collection::make($closureReflection->getParameters());
+
+        $requestClass = $parameters->firstwhere(
+            fn (\ReflectionParameter $parameter) => is_subclass_of($parameter->getType()->getName(), FormRequest::class)
+        );
+
+        if (!$requestClass){
+            // TODO
+            return;
+        }
+
+        return $this->resolveBody($requestClass);
     }
 
     /**
@@ -43,15 +59,20 @@ class RuleResolver
 
         $parameters = Collection::make($method->getParameters());
 
-        $requestClass = $parameters->where(
+        $requestClass = $parameters->firstwhere(
             fn (\ReflectionParameter $parameter) => is_subclass_of($parameter->getType()->getName(), FormRequest::class)
-        )->first();
+        );
 
         if (!$requestClass){
             // TODO
             return;
         }
 
+        return $this->resolveBody($requestClass);
+    }
+
+    protected function resolveBody(\ReflectionParameter $requestClass): RequestBody
+    {
         $class = $requestClass->getType()->getName();
 
         $mediaType = new MediaType();
