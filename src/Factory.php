@@ -12,8 +12,10 @@ use Chinmay\OpenApi\Paths;
 use Chinmay\OpenApi\Response;
 use Chinmay\OpenApi\Responses;
 use Chinmay\OpenApi\Schema;
+use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
@@ -85,6 +87,10 @@ class Factory
 
     protected function filterPaths(Route $route): bool
     {
+        if (Arr::get($route->action, 'uses') instanceof Closure) {
+            return false;
+        }
+
         if ($excludedMiddlewares = Config::get('openapi.routes.exclude.middlewares')) {
             return ! array_intersect((array) $route->action['middleware'], $excludedMiddlewares);
         }
