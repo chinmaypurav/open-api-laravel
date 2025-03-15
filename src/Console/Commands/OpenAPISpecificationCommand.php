@@ -21,7 +21,7 @@ class OpenAPISpecificationCommand extends Command
         $path = Config::get('openapi.schema.path');
         $filename = Config::get('openapi.schema.filename');
 
-        (new Filesystem())->ensureDirectoryExists($path);
+        (new Filesystem)->ensureDirectoryExists($path);
 
         File::put("{$path}/{$filename}", $json);
     }

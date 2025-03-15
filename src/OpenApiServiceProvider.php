@@ -19,7 +19,7 @@ class OpenApiServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-               OpenAPISpecificationCommand::class
+                OpenAPISpecificationCommand::class,
             ]);
         }
 

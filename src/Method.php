@@ -11,6 +11,7 @@ use ReflectionException;
 class Method
 {
     public ?\ReflectionParameter $requestClass = null;
+
     public string $docComment = '';
 
     /**
@@ -62,13 +63,12 @@ class Method
             fn (\ReflectionParameter $parameter) => is_subclass_of($parameter->getType()->getName(), FormRequest::class)
         );
 
-
         $this->resolveDocComment($method->getDocComment());
     }
 
     protected function resolveDocComment(string|false $docComment): void
     {
-        if (!$docComment) {
+        if (! $docComment) {
             return;
         }
 

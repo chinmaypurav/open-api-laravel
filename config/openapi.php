@@ -8,11 +8,11 @@ return [
     'routes' => [
         'include' => [
             'middlewares' => ['api'],
-            'paths' => []
+            'paths' => [],
         ],
         'exclude' => [
             'middlewares' => [],
-            'paths' => []
+            'paths' => [],
         ],
     ],
     'defaults' => [

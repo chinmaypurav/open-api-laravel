@@ -5,8 +5,6 @@ namespace Chinmay\OpenApiLaravel;
 use Chinmay\OpenApi\MediaType;
 use Chinmay\OpenApi\RequestBody;
 use Chinmay\OpenApi\Schema;
-use Closure;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 
 class RuleResolver
@@ -15,9 +13,9 @@ class RuleResolver
     {
         $class = $requestClass->getType()->getName();
 
-        $mediaType = new MediaType();
+        $mediaType = new MediaType;
 
-        $rules = (new $class())->rules();
+        $rules = (new $class)->rules();
 
         $schema = new Schema('object');
 
@@ -56,6 +54,6 @@ class RuleResolver
 
         $mediaType->setSchema($schema);
 
-        return (new RequestBody($mediaType));
+        return new RequestBody($mediaType);
     }
 }

@@ -25,9 +25,7 @@ use ReflectionException;
 
 class Factory
 {
-    public function __construct(protected Router $router, protected OpenApi $openApi, protected Paths $paths)
-    {
-    }
+    public function __construct(protected Router $router, protected OpenApi $openApi, protected Paths $paths) {}
 
     public function make(): self
     {
@@ -68,7 +66,6 @@ class Factory
         $info->setLicense($licence);
     }
 
-
     public function makePaths(): Paths
     {
         $allRoutes = Collection::make($this->router->getRoutes());
@@ -80,7 +77,6 @@ class Factory
         )->mapWithKeys(
             fn (Collection $routes, string $uri) => $this->makePathItem($uri, $routes)
         );
-
 
         return $this->paths;
     }
@@ -114,7 +110,7 @@ class Factory
 
     protected function makePathItem(string $uri, Collection $routes): Collection
     {
-        $pathItem = new PathItem();
+        $pathItem = new PathItem;
 
         $routes->map(
             fn (Route $route) => $this->makeOperation($pathItem, $route)
@@ -130,7 +126,7 @@ class Factory
      */
     protected function makeOperation(PathItem $pathItem, Route $route): void
     {
-        $operation = new Operation();
+        $operation = new Operation;
 
         if ($tag = $route->action['tag'] ?? '') {
             $operation->setTags([$tag]);
@@ -140,7 +136,7 @@ class Factory
             $this->makeParameter($route, $operation);
         }
 
-        $responses = new Responses();
+        $responses = new Responses;
 
         $response = new Response('Default Response');
         $responses->putDefault($response);
