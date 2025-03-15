@@ -23,6 +23,6 @@
         "chinmay/open-api": "dev-main"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "dev-master"
+        "laravel/pint": "^1.21"
     }
 }
